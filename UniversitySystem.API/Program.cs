@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Mvc;
 using UniversitySystem.Application;
 using UniverstySystem.Infrastructure;
 
@@ -17,6 +18,11 @@ namespace UniversitySystem.API
             builder.Services.AddOpenApi();
 
             builder.Services.AddApplicationService().AddInfrastructureService(builder.Configuration);
+
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
             var app = builder.Build();
 

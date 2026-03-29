@@ -1,36 +1,38 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using UniversitySystem.Application.Bases;
 using UniversitySystem.Application.Features.Students.Queries.Models;
 using UniversitySystem.Application.Interfaces;
 
 namespace UniversitySystem.Application.Features.Students.Queries.GetStudentList
 {
-    public record GetStudentListQuery : IRequest<List<StudentItemDto>>;
+    public record GetStudentListQuery : IRequest<Response<List<StudentItemDto>>>;
 
-    public class GetStudentListHandler : IRequestHandler<GetStudentListQuery, List<StudentItemDto>>
+    public class GetStudentListHandler : IRequestHandler<GetStudentListQuery, Response<List<StudentItemDto>>>
     {
         private readonly IAppDbContext _context;
-
-        public GetStudentListHandler(IAppDbContext context)
+        private readonly IMapper _mapper;
+        public GetStudentListHandler(IAppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<List<StudentItemDto>> Handle(GetStudentListQuery request, CancellationToken cancellationToken)
+        public async Task<Response<List<StudentItemDto>>> Handle(GetStudentListQuery request, CancellationToken cancellationToken)
         {
+            var data = await _context.Students
+              .AsNoTracking()
+              .ProjectTo<StudentItemDto>(_mapper.ConfigurationProvider)
+              .ToListAsync(cancellationToken);
 
-            return await _context.Students
-                .AsNoTracking()
-                .Select(s => new StudentItemDto
-                {
-                    Id = s.Id,
-                    Name = s.Name,
-                    PersonalEmail = s.PersonalEmail,
-                    Level = s.Level,
-                    DepartmentId = s.DepartmentId,
-                })
-                .ToListAsync(cancellationToken);
+            if (!data.Any())
+                return ResponseHandler.Failure<List<StudentItemDto>>(
+                    "No students found",
+                    statusCode: 404
+                    );
+            return ResponseHandler.Success(data);
         }
     }
-
 }
