@@ -1,8 +1,7 @@
 ﻿namespace UniversitySystem.Domain.Entities
 {
-    public class Student
+    public class Student : BaseEntity<int>
     {
-        public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public int Age { get; set; }
         public string PersonalEmail { get; set; } = string.Empty;
@@ -10,5 +9,7 @@
         public DateTime EnrollmentDate { get; set; } = DateTime.UtcNow;
         public double GPA { get; set; }
         public int Level { get; set; }
+        public int DepartmentId { get; set; }
+        public Department Department { get; set; } = null!;
     }
 }
