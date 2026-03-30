@@ -27,6 +27,7 @@ namespace UniversitySystem.Application.Features.Students.Queries.GetStudentList
               .ProjectTo<StudentItemDto>(_mapper.ConfigurationProvider)
               .ToListAsync(cancellationToken);
 
+
             if (!data.Any())
                 return ResponseHandler.Failure<List<StudentItemDto>>(
                     "No students found",

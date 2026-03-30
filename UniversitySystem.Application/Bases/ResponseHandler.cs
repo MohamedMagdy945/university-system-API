@@ -15,14 +15,18 @@ namespace UniversitySystem.Application.Bases
             };
         }
 
-        public static Response<T> Failure<T>(string message, List<string>? errors = null, int statusCode = StatusCodes.Status400BadRequest)
+        public static Response<T> Failure<T>(string message,
+            Dictionary<string, List<string>>? errors = null,
+            int statusCode = StatusCodes.Status400BadRequest,
+                string? correlationId = null)
         {
             return new Response<T>
             {
                 IsSuccess = false,
                 Message = message,
-                Errors = errors ?? new List<string>(),
-                StatusCode = statusCode
+                Errors = errors ?? new Dictionary<string, List<string>>(),
+                StatusCode = statusCode,
+                CorrelationId = correlationId
             };
         }
 
@@ -32,7 +36,7 @@ namespace UniversitySystem.Application.Bases
             {
                 IsSuccess = false,
                 Message = message,
-                Errors = errors ?? new List<string>(),
+                Errors = new Dictionary<string, List<string>>(),
                 StatusCode = StatusCodes.Status404NotFound
             };
         }
@@ -43,7 +47,7 @@ namespace UniversitySystem.Application.Bases
             {
                 IsSuccess = false,
                 Message = message,
-                Errors = new List<string> { message },
+                Errors = new Dictionary<string, List<string>>(),
                 StatusCode = 401
             };
         }

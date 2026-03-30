@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UniversitySystem.Application;
 using UniverstySystem.Infrastructure;
+using UniverstySystem.Infrastructure.Middlewares;
 
 namespace UniversitySystem.API
 {
@@ -32,6 +33,8 @@ namespace UniversitySystem.API
             {
                 app.MapOpenApi();
             }
+
+            app.UseMiddleware<ErrorHandlerMiddleware>();
 
             app.UseHttpsRedirection();
 

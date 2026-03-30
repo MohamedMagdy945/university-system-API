@@ -1,13 +1,15 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using UniversitySystem.Application.Bases;
+using UniversitySystem.Application.Exceptions;
 using UniversitySystem.Application.Interfaces;
 using UniversitySystem.Domain.Entities;
 
 namespace UniversitySystem.Application.Features.Students.Commands.CreateStudent
 {
-    public record CreateStudentCommand(string Name, string PersonalEmail, int Level, int DepartmentId) : IRequest<Response<int>>;
-    public class CreateStudentHandler : IRequestHandler<CreateStudentCommand, Response<int>>
+    public record CreateStudentCommand(string Name, string PersonalEmail, int Level, int DepartmentId) : IRequest<Response<object>>;
+    public class CreateStudentHandler : IRequestHandler<CreateStudentCommand, Response<object>>
     {
         private readonly IAppDbContext _context;
         private readonly IMapper _mapper;
@@ -16,16 +18,29 @@ namespace UniversitySystem.Application.Features.Students.Commands.CreateStudent
             _context = context;
             _mapper = mapper;
         }
-        public async Task<Response<int>> Handle(CreateStudentCommand request, CancellationToken cancellationToken)
+        public async Task<Response<object>> Handle(CreateStudentCommand request, CancellationToken cancellationToken)
         {
+
+            var departmentExists = await _context.Departments
+                .AnyAsync(d => d.Id == request.DepartmentId, cancellationToken);
+
+            if (!departmentExists)
+                throw new NotFoundAppException("Department", request.DepartmentId);
+
+            var emailExists = await _context.Students
+            .AnyAsync(x => x.PersonalEmail == request.PersonalEmail, cancellationToken);
+
+            if (emailExists)
+                return ResponseHandler.Failure<object>("Email already exists");
+
             var studentEntity = _mapper.Map<Student>(request);
 
 
             var result = await _context.Students.AddAsync(studentEntity, cancellationToken);
+
             await _context.SaveChangesAsync(cancellationToken);
 
-            return ResponseHandler.Success<int>(studentEntity.Id);
-
+            return ResponseHandler.Success<object>(new { Id = studentEntity.Id });
         }
     }
 }

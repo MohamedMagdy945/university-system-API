@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using UniversitySystem.Application.Bases;
+using UniversitySystem.Application.Exceptions;
 using UniversitySystem.Application.Features.Students.Queries.Models;
 using UniversitySystem.Application.Interfaces;
 
@@ -29,8 +30,7 @@ namespace UniversitySystem.Application.Features.Students.Queries.GetStudentById
 
             if (studentDto is null)
             {
-                List<string> errors = new() { $"No student found with ID {request.Id}" };
-                return ResponseHandler.NotFound<StudentItemDto>(errors: errors);
+                throw new NotFoundAppException("Student", request.Id);
 
             }
             return ResponseHandler.Success(studentDto);

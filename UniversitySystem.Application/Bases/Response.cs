@@ -5,11 +5,11 @@
         public bool IsSuccess { get; set; }
         public string Message { get; set; } = string.Empty;
         public T? Data { get; set; }
-        public List<string> Errors { get; set; } = new();
+        public Dictionary<string, List<string>> Errors { get; set; } = new();
         public int StatusCode { get; set; }
+        public string? CorrelationId { get; set; }
 
         public Response() { }
-
 
         public Response(T data, string message = "Request successful", int statusCode = 200)
         {
@@ -18,12 +18,11 @@
             Message = message;
             StatusCode = statusCode;
         }
-
-        public Response(string message, List<string>? errors = null, int statusCode = 400)
+        public Response(string message, Dictionary<string, List<string>>? errors = null, int statusCode = 400)
         {
             IsSuccess = false;
             Message = message;
-            Errors = errors ?? new List<string>();
+            Errors = errors ?? new();
             StatusCode = statusCode;
         }
     }

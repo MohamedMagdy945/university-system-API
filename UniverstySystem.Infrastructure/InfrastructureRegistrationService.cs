@@ -1,8 +1,6 @@
-﻿using FluentValidation;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 using UniversitySystem.Application.Interfaces;
 using UniverstySystem.Infrastructure.Persistence;
 
@@ -16,8 +14,6 @@ namespace UniverstySystem.Infrastructure
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IAppDbContext, AppDbContext>();
-
-            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             return services;
         }

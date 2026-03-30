@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using UniversitySystem.Application.Behaviors;
 using UniversitySystem.Application.Features.Students.Queries.Models;
 namespace UniversitySystem.Application
 {
@@ -14,6 +15,9 @@ namespace UniversitySystem.Application
             services.AddAutoMapper(cfg => { }, typeof(StudentItemDto).Assembly);
 
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             return services;
         }
