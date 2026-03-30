@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UniversitySystem.Application.Features.Students.Commands.CreateStudent;
+using UniversitySystem.Application.Features.Students.Commands.UpdateStudent;
 using UniversitySystem.Application.Features.Students.Queries.GetStudentById;
 using UniversitySystem.Application.Features.Students.Queries.GetStudentList;
 
@@ -22,6 +23,13 @@ namespace UniversitySystem.API.Controllers
 
         [HttpPost]
         public async Task<IActionResult> CreateStudent(CreateStudentCommand command, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(command, cancellationToken);
+            return NewResult(result);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateStudent(UpdateStudentCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
             return NewResult(result);

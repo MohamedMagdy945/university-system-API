@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniversitySystem.Application.Bases;
 using UniversitySystem.Application.Exceptions;
@@ -40,7 +41,7 @@ namespace UniversitySystem.Application.Features.Students.Commands.CreateStudent
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return ResponseHandler.Success<object>(new { Id = studentEntity.Id });
+            return ResponseHandler.Success<object>(new { Id = studentEntity.Id }, message: "Student Created Successful", statusCode: StatusCodes.Status201Created);
         }
     }
 }
