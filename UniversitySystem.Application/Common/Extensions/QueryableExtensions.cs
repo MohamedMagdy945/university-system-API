@@ -18,14 +18,22 @@ namespace UniversitySystem.Application.Common.Extensions
         }
         public static IQueryable<T> ApplySorting<T, TKey>(
         this IQueryable<T> query,
-        Expression<Func<T, TKey>>? keySelector, // خليناه يقبل null
+        Expression<Func<T, TKey>>? keySelector,
         bool desc = false)
         {
-            if (keySelector == null) return query; // لو مفيش ترتيب، كمل عادي
+            if (keySelector == null) return query;
 
             return desc
                 ? query.OrderByDescending(keySelector)
                 : query.OrderBy(keySelector);
+        }
+
+        public static IQueryable<T> ApplyFilter<T>(
+        this IQueryable<T> query,
+        bool condition,
+        Expression<Func<T, bool>> predicate)
+        {
+            return condition ? query.Where(predicate) : query;
         }
     }
 }
