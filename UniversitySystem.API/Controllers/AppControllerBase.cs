@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using UniversitySystem.Application.Bases;
+using UniversitySystem.Application.Common.Bases;
 
 namespace UniversitySystem.API.Controllers
 {

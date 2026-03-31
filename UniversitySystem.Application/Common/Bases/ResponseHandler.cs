@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace UniversitySystem.Application.Bases
+namespace UniversitySystem.Application.Common.Bases
 {
     public static class ResponseHandler
     {

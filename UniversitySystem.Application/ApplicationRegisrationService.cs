@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using UniversitySystem.Application.Behaviors;
+using UniversitySystem.Application.Common.Behaviors;
 using UniversitySystem.Application.Features.Students.Models;
 
 namespace UniversitySystem.Application

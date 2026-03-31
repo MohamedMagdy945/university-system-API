@@ -5,8 +5,8 @@
     using Microsoft.Extensions.Logging;
     using System.Net;
     using System.Text.Json;
-    using UniversitySystem.Application.Bases;
-    using UniversitySystem.Application.Exceptions;
+    using UniversitySystem.Application.Common.Bases;
+    using UniversitySystem.Application.Common.Exceptions;
 
     public class ErrorHandlerMiddleware
     {

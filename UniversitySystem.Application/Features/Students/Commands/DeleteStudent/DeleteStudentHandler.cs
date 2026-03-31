@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using UniversitySystem.Application.Bases;
-using UniversitySystem.Application.Exceptions;
+using UniversitySystem.Application.Common.Bases;
+using UniversitySystem.Application.Common.Exceptions;
 using UniversitySystem.Application.Interfaces;
 
 namespace UniversitySystem.Application.Features.Students.Commands.DeleteStudent

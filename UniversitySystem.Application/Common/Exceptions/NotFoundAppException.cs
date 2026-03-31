@@ -1,4 +1,4 @@
-﻿namespace UniversitySystem.Application.Exceptions
+﻿namespace UniversitySystem.Application.Common.Exceptions
 {
     public class NotFoundAppException : Exception
     {

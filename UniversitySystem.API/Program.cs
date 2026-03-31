@@ -1,8 +1,11 @@
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UniversitySystem.Application;
+using UniversitySystem.Domain.Entities;
 using UniverstySystem.Infrastructure;
 using UniverstySystem.Infrastructure.Middlewares;
+using UniverstySystem.Infrastructure.Persistence;
 
 namespace UniversitySystem.API
 {
@@ -18,12 +21,17 @@ namespace UniversitySystem.API
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
-            builder.Services.AddApplicationService().AddInfrastructureService(builder.Configuration);
-
             builder.Services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
+
+            builder.Services
+            .AddIdentity<ApplicationUser, IdentityRole<int>>()
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+
+            builder.Services.AddApplicationService().AddInfrastructureService(builder.Configuration);
 
             var app = builder.Build();
 

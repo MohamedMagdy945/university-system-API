@@ -1,9 +1,8 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace UniverstySystem.Infrastructure.Migrations
+namespace UniverstySystem.Infrastructure.Migrations.Persistence
 {
     /// <inheritdoc />
     public partial class initial : Migration

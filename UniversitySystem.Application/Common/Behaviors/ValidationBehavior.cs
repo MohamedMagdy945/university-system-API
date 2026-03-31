@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
 using MediatR;
-using UniversitySystem.Application.Exceptions;
+using UniversitySystem.Application.Common.Exceptions;
 
-namespace UniversitySystem.Application.Behaviors
+namespace UniversitySystem.Application.Common.Behaviors
 {
     public class ValidationBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>

@@ -2,8 +2,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using UniversitySystem.Application.Bases;
-using UniversitySystem.Application.Exceptions;
+using UniversitySystem.Application.Common.Bases;
+using UniversitySystem.Application.Common.Exceptions;
 using UniversitySystem.Application.Interfaces;
 using UniversitySystem.Domain.Entities;
 

@@ -1,4 +1,4 @@
-﻿namespace UniversitySystem.Application.Bases
+﻿namespace UniversitySystem.Application.Common.Bases
 {
     public class Response<T>
     {

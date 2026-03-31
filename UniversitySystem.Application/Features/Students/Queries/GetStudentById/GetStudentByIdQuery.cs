@@ -2,8 +2,8 @@
 using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using UniversitySystem.Application.Bases;
-using UniversitySystem.Application.Exceptions;
+using UniversitySystem.Application.Common.Bases;
+using UniversitySystem.Application.Common.Exceptions;
 using UniversitySystem.Application.Features.Students.Models;
 using UniversitySystem.Application.Interfaces;
 
@@ -22,7 +22,6 @@ namespace UniversitySystem.Application.Features.Students.Queries.GetStudentById
         }
         public async Task<Response<StudentItemDto>> Handle(GetStudentByIdQuery request, CancellationToken cancellationToken)
         {
-
             var studentDto = await _context.Students
                 .Where(s => s.Id == request.Id)
                 .ProjectTo<StudentItemDto>(_mapper.ConfigurationProvider)
@@ -34,8 +33,6 @@ namespace UniversitySystem.Application.Features.Students.Queries.GetStudentById
 
             }
             return ResponseHandler.Success(studentDto);
-
-
         }
     }
 }

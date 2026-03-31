@@ -2,7 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using UniversitySystem.Application.Bases;
+using UniversitySystem.Application.Common.Bases;
 using UniversitySystem.Application.Common.Extensions;
 using UniversitySystem.Application.Common.Wrappers;
 using UniversitySystem.Application.Features.Students.Models;

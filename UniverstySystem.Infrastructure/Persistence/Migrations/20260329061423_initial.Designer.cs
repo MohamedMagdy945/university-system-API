@@ -9,7 +9,7 @@ using UniverstySystem.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace UniverstySystem.Infrastructure.Migrations
+namespace UniverstySystem.Infrastructure.Migrations.Persistence
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20260329061423_initial")]
