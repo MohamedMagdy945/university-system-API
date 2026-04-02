@@ -5,7 +5,7 @@ using UniversitySystem.Application.Interfaces;
 
 namespace UniversitySystem.Application.Identity.RefreshToeken.Commands
 {
-    public record RefreshTokenCommand(string RefreshToken) : IRequest<Response<TokenResponse>>;
+    public record RefreshTokenCommand(string RefreshToken, string Ip) : IRequest<Response<TokenResponse>>;
     public class RefreshTokenHandler : IRequestHandler<RefreshTokenCommand, Response<TokenResponse>>
     {
         private readonly IAuthService _authService;
@@ -15,10 +15,14 @@ namespace UniversitySystem.Application.Identity.RefreshToeken.Commands
         }
         public async Task<Response<TokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
-            var result = await _authService.RefreshTokenAsync(request.RefreshToken, "");
-            if (result == null)
-                return ResponseHandler.Unauthorized<TokenResponse>("Invalid refresh token");
-            return ResponseHandler.Success(result, "Token refreshed successfully");
+            var ipAddress = request.Ip ?? string.Empty;
+
+            var result = await _authService.RefreshTokenAsync(request.RefreshToken, ipAddress);
+
+            if (!result.Succeeded)
+                return ResponseHandler.Unauthorized<TokenResponse>(result.Error!);
+
+            return ResponseHandler.Success(result.Data!, "Token refreshed successfully");
         }
     }
 }

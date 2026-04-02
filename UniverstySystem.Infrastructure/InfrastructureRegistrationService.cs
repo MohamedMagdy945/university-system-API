@@ -16,11 +16,16 @@ namespace UniverstySystem.Infrastructure
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddSingleton<ITokenGenerator, TokenGenerator>();
+
+
             services.AddScoped<IAppDbContext, AppDbContext>();
 
-            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IUserService, UserService>();
 
-            services.AddSingleton<ITokenService, TokenService>();
+            services.AddScoped<IRoleService, RoleService>();
+
+            services.AddScoped<IAuthService, AuthService>();
 
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 

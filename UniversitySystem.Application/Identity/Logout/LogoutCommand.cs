@@ -19,7 +19,12 @@ namespace UniversitySystem.Application.Identity.Logout
             {
                 var result = await _authService.LogoutAsync(request.RefreshToken);
 
-                return ResponseHandler.Success(result, "Logged out successfully");
+                if (!result.Succeeded)
+                {
+                    return ResponseHandler.Unauthorized<bool>(result.Error!);
+                }
+
+                return ResponseHandler.Success(true, "Logged out successfully");
             }
 
 

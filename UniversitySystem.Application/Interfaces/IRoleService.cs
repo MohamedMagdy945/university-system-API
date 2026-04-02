@@ -1,15 +1,15 @@
-﻿namespace UniversitySystem.Application.Interfaces
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace UniversitySystem.Application.Interfaces
 {
-    internal interface IRoleService
+    public interface IRoleService
     {
-        Task<bool> CreateRoleAsync(string roleName);
+        Task<IdentityResult> CreateRoleAsync(string roleName);
 
-        Task<bool> DeleteRoleAsync(string roleName);
+        Task<List<IdentityRole<int>>> GetAllRolesAsync();
 
-        Task<bool> AddUserToRoleAsync(int userId, string role);
+        Task<IdentityRole<int>?> GetByNameAsync(string roleName);
 
-        Task<bool> RemoveUserFromRoleAsync(int userId, string role);
-
-        Task<IEnumerable<string>> GetUserRolesAsync(int userId);
+        Task<IdentityResult> DeleteRoleAsync(string roleName);
     }
 }

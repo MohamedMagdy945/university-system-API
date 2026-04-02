@@ -18,12 +18,12 @@ namespace UniversitySystem.Application.Identity.Login.Commands
         public async Task<Response<TokenResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             var result = await _authService.LoginAsync(request.UserName,
-                request.Password, request.Ip!, request.Device!);
+                request.Password, request.Ip ?? "", request.Device ?? "");
 
-            if (result == null)
-                return ResponseHandler.Unauthorized<TokenResponse>("Invalid email or password");
+            if (!result.Succeeded)
+                return ResponseHandler.Unauthorized<TokenResponse>(result.Error ?? "Invalid User Name Or Password");
 
-            return ResponseHandler.Success(result, "Login successful");
+            return ResponseHandler.Success(result.Data!, "Login successful");
         }
 
     }

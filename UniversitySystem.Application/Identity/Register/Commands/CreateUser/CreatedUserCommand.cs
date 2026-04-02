@@ -22,10 +22,15 @@ namespace UniversitySystem.Application.Identity.Register.Commands.CreateUser
                 request.UserName,
                 request.Email,
                 request.Password,
-                request.Ip,
-                request.Device);
+                request.Ip ?? "",
+                request.Device ?? "");
 
-            return ResponseHandler.Success(result, "User registered successfully");
+            if (!result.Succeeded)
+                return ResponseHandler.Failure<TokenResponse>(result.Error ?? "User registration failed");
+
+            var tokenResponse = result.Data;
+
+            return ResponseHandler.Success(tokenResponse!, "User registered successfully");
         }
     }
 }

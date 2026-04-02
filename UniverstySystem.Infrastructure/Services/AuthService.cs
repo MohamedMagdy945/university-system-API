@@ -1,106 +1,114 @@
-﻿using UniversitySystem.Application.Common.Exceptions;
-using UniversitySystem.Application.Common.Models;
+﻿using UniversitySystem.Application.Common.Models;
+using UniversitySystem.Application.Common.Wrappers;
 using UniversitySystem.Application.Interfaces;
 using UniversitySystem.Domain.Identity;
 namespace UniverstySystem.Infrastructure.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IIdentityService _identityService;
+        private readonly IUserService _userService;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
-        private readonly ITokenService _tokenService;
-        public AuthService(IIdentityService identityService,
+        private readonly ITokenGenerator _tokenService;
+        public AuthService(IUserService userService,
             IRefreshTokenRepository refreshTokenRepository,
-            ITokenService tokenService
+            ITokenGenerator tokenService
             )
         {
-            _identityService = identityService;
+            _userService = userService;
             _refreshTokenRepository = refreshTokenRepository;
             _tokenService = tokenService;
         }
-        public async Task<TokenResponse> RegisterAsync(string username, string email, string password, string ip, string device)
+        public async Task<Result<TokenResponse>> RegisterAsync(string username, string email, string password, string ip, string device)
         {
-            var (result, userId) = await _identityService.CreateUserAsync(username, email, password);
+            var (result, user) = await _userService.CreateAsync(username, email, password);
 
-            if (!result.Succeeded)
-                throw new BadRequestAppException(string.Join(", ", result.Errors.Select(e => e.Description)));
+            if (!result.Succeeded || user == null)
+            {
+                var error = result.Errors.Select(e => e.Description).FirstOrDefault() ?? "Authentication failed";
+                return Result<TokenResponse>.Failure(error);
 
-            var user = await _identityService.GetUserByIdAsync(userId!.Value);
+            }
 
-            var roles = await _identityService.GetRolesAsync(user);
+            var roles = await _userService.GetRolesAsync(user.Id);
 
             var tokens = _tokenService.GenerateTokenPair(user, roles, ip, device);
 
-            await SaveRefreshToken(user.Id, tokens);
+            var saveResult = await SaveRefreshToken(user.Id, tokens);
 
-            return Map(tokens);
+            if (!saveResult.Succeeded)
+                return Result<TokenResponse>.Failure(saveResult.Error!);
 
+            return Result<TokenResponse>.Success(MapToTokenResponse(tokens));
         }
 
-        public async Task<TokenResponse> LoginAsync(string username, string password, string ip, string device)
+        public async Task<Result<TokenResponse>> LoginAsync(string username, string password, string ip, string device)
         {
 
-
-            var user = await _identityService.LoginAsync(username, password);
+            var user = await _userService.CheckPasswordAsync(username, password);
 
             if (user == null)
-                throw new UnauthorizedAccessException("Invalid credentials");
+                return Result<TokenResponse>.Failure("username or password is invalid");
 
-            var roles = await _identityService.GetRolesAsync(user);
+            var roles = await _userService.GetRolesAsync(user.Id);
 
             var tokens = _tokenService.GenerateTokenPair(user, roles, ip, device);
 
             await SaveRefreshToken(user.Id, tokens);
 
-            return Map(tokens);
+            return Result<TokenResponse>.Success(MapToTokenResponse(tokens));
         }
 
-        public async Task<bool> LogoutAsync(string refreshToken)
+        public async Task<Result<bool>> LogoutAsync(string refreshToken)
         {
-            var hash = _tokenService.HashToken(refreshToken);
+            var hashToken = _tokenService.HashToken(refreshToken);
+            var result = await _refreshTokenRepository.RevokeAsync(hashToken);
 
-            var stored = await _refreshTokenRepository.GetByHashAsync(hash);
+            if (result.Succeeded)
+                return Result<bool>.Success(true);
 
-            if (stored == null)
-                return false;
-
-            stored.RevokedAt = DateTime.UtcNow;
-            stored.RevokedReason = "Logout";
-
-            await _refreshTokenRepository.UpdateAsync(stored);
-
-            return true;
+            return Result<bool>.Failure("Session already closed or invalid token.");
 
         }
 
-        public async Task<TokenResponse> RefreshTokenAsync(string refreshToken, string ip)
+        public async Task<Result<TokenResponse>> RefreshTokenAsync(string refreshToken, string ip)
         {
-            var hash = _tokenService.HashToken(refreshToken);
+            var hashToken = _tokenService.HashToken(refreshToken);
 
-            var stored = await _refreshTokenRepository.GetByHashAsync(hash);
+            var storedResult = await _refreshTokenRepository.GetByHashAsync(hashToken);
 
-            if (stored == null || stored.RevokedAt != null || stored.ExpiresAt < DateTime.UtcNow)
-                throw new UnauthorizedAccessException("Invalid refresh token");
+            var storedHashToken = storedResult.Data;
 
-            stored.IsUsed = true;
-            stored.RevokedAt = DateTime.UtcNow;
-            stored.RevokedByIp = ip;
+            if (!storedResult.Succeeded || storedHashToken == null || storedHashToken.RevokedAt != null
+                || storedHashToken.ExpiresAt < DateTime.UtcNow)
+            {
+                return Result<TokenResponse>.Failure("Invalid session.");
+            }
 
-            await _refreshTokenRepository.UpdateAsync(stored);
+            storedHashToken.RevokedAt = DateTime.UtcNow;
 
-            var user = await _identityService.GetUserByIdAsync(stored.UserId);
-            var roles = await _identityService.GetRolesAsync(user!);
+            storedHashToken.RevokedReason = "Replaced by new token";
 
-            var newTokens = _tokenService.GenerateTokenPair(user!, roles, ip, stored.DeviceInfo);
+            storedHashToken.RevokedByIp = ip;
 
-            await SaveRefreshToken(user!.Id, newTokens);
+            await _refreshTokenRepository.UpdateAsync(storedHashToken);
 
-            return Map(newTokens);
+            var user = await _userService.GetByIdAsync(storedHashToken.UserId);
+
+            if (user == null)
+                return Result<TokenResponse>.Failure("User not found.");
+
+            var roles = await _userService.GetRolesAsync(user.Id);
+
+            var newTokens = _tokenService.GenerateTokenPair(user, roles, ip, storedHashToken.DeviceInfo!);
+
+            await SaveRefreshToken(user.Id, newTokens);
+
+            return Result<TokenResponse>.Success(MapToTokenResponse(newTokens));
 
         }
-        private async Task SaveRefreshToken(int userId, TokenPair tokens)
+        private async Task<Result<bool>> SaveRefreshToken(int userId, TokenPair tokens)
         {
-            await _refreshTokenRepository.AddAsync(new RefreshToken
+            var result = await _refreshTokenRepository.AddAsync(new RefreshToken
             {
                 TokenHash = tokens.RefreshTokenHash,
                 UserId = userId,
@@ -109,8 +117,9 @@ namespace UniverstySystem.Infrastructure.Services
                 CreatedByIp = tokens.Ip,
                 DeviceInfo = tokens.Device
             });
+            return result;
         }
-        private TokenResponse Map(TokenPair tokens)
+        private TokenResponse MapToTokenResponse(TokenPair tokens)
         {
             return new TokenResponse
             {

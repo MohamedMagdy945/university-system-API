@@ -1,16 +1,25 @@
-﻿using UniversitySystem.Domain.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using UniversitySystem.Domain.Identity;
 
 namespace UniversitySystem.Application.Interfaces
 {
     public interface IUserService
     {
         Task<AppUser?> GetByIdAsync(int userId);
+
+        Task<AppUser?> CheckPasswordAsync(string username, string password);
         Task<IEnumerable<AppUser>> GetAllAsync();
 
-        Task<bool> CreateAsync(string userName, string email, string password);
+        Task<(IdentityResult Result, AppUser? User)> CreateAsync(string userName, string email, string password);
 
-        Task<bool> UpdateAsync(AppUser user);
+        Task<IdentityResult> UpdateAsync(int id, string userName, string email);
 
-        Task<bool> DeleteAsync(int userId);
+        Task<IdentityResult> DeleteAsync(int userId);
+
+        Task<IdentityResult> AddRoleAsync(int userId, string roleName);
+
+        Task<IdentityResult> RemoveRoleAsync(int userId, string roleName);
+
+        Task<IList<string>> GetRolesAsync(int userId);
     }
 }
