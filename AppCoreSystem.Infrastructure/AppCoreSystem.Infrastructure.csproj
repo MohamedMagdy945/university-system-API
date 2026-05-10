@@ -24,5 +24,10 @@
     <ProjectReference Include="..\AppCoreSystem.Domain\AppCoreSystem.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Files\" />
+    <Folder Include="Data\Seed\" />
+  </ItemGroup>
+
 
 </Project>

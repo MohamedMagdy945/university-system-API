@@ -1,28 +1,45 @@
-﻿using MediatR;
+﻿using AppCoreSystem.Application.Common.Bases;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using AppCoreSystem.Application.Common.Bases;
 
-namespace AppCoreSystem.API.Controllers
+namespace AppCoreSystem.API.Controllers;
+
+[ApiController]
+[Route("api/v{version:apiVersion}/[controller]")]
+public abstract class AppControllerBase : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AppControllerBase : ControllerBase
-    {
-        private IMediator? _mediatorInstance;
-        protected IMediator _mediator => _mediatorInstance ??= HttpContext.RequestServices.GetService<IMediator>()!;
+    protected readonly IMediator _mediator;
 
-        protected ObjectResult NewResult<T>(Response<T> response)
+    protected AppControllerBase(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    protected IActionResult NewResult<T>(Response<T> response)
+    {
+        return response.StatusCode switch
         {
-            return response.StatusCode switch
-            {
-                200 => new OkObjectResult(response),
-                201 => new CreatedResult(string.Empty, response),
-                404 => new NotFoundObjectResult(response),
-                400 => new BadRequestObjectResult(response),
-                401 => new UnauthorizedObjectResult(response),
-                422 => new UnprocessableEntityObjectResult(response),
-                _ => new BadRequestObjectResult(response)
-            };
-        }
+            200 => Ok(response),
+
+            201 => Created(string.Empty, response),
+
+            204 => NoContent(),
+
+            400 => BadRequest(response),
+
+            401 => Unauthorized(response),
+
+            403 => StatusCode(StatusCodes.Status403Forbidden, response),
+
+            404 => NotFound(response),
+
+            409 => Conflict(response),
+
+            422 => UnprocessableEntity(response),
+
+            500 => StatusCode(StatusCodes.Status500InternalServerError, response),
+
+            _ => StatusCode(response.StatusCode, response)
+        };
     }
 }
