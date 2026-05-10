@@ -15,7 +15,7 @@ public abstract class AppControllerBase : ControllerBase
         _mediator = mediator;
     }
 
-    protected IActionResult NewResult<T>(Response<T> response)
+    protected IActionResult Result<T>(Response<T> response)
     {
         return response.StatusCode switch
         {
