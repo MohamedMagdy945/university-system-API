@@ -11,12 +11,13 @@ namespace AppCoreSystem.API.Controllers
     [Authorize]
     public class StudentsController : AppControllerBase
     {
+
         [HttpGet]
         //[HasPermission(Permissions.Students_View, Permissions.Students_Delete)]
         public async Task<IActionResult> GetStudents([FromQuery] GetStudentListPaginatedQuery request, CancellationToken cancellationToken)
         {
-            var students = await _mediator.Send(request, cancellationToken);
-            return NewResult(students);
+            var students = await Mediator.Send(request, cancellationToken);
+            return Result(students);
         }
         //[HttpGet]
         //public async Task<IActionResult> GetAllStudents(CancellationToken cancellationToken)
@@ -27,29 +28,29 @@ namespace AppCoreSystem.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetStudentById(int id, CancellationToken cancellationToken)
         {
-            var students = await _mediator.Send(new GetStudentByIdQuery(id), cancellationToken);
-            return NewResult(students);
+            var students = await Mediator.Send(new GetStudentByIdQuery(id), cancellationToken);
+            return Result(students);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateStudent(CreateStudentCommand command, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(command, cancellationToken);
-            return NewResult(result);
+            var result = await Mediator.Send(command, cancellationToken);
+            return Result(result);
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateStudent(UpdateStudentCommand command, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(command, cancellationToken);
-            return NewResult(result);
+            var result = await Mediator.Send(command, cancellationToken);
+            return Result(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStudent(int id, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new DeleteStudentCommand(id), cancellationToken);
-            return NewResult(result);
+            var result = await Mediator.Send(new DeleteStudentCommand(id), cancellationToken);
+            return Result(result);
         }
 
     }

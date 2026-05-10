@@ -1,8 +1,9 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+using AppCoreSystem.API.Configurations;
 using AppCoreSystem.API.DependencyInjection;
 using AppCoreSystem.Application;
 using AppCoreSystem.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using UniverstySystem.Infrastructure;
 using UniverstySystem.Infrastructure.Middlewares;
 using UniverstySystem.Infrastructure.Models;
@@ -19,8 +20,9 @@ namespace AppCoreSystem.API
             // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+
+            builder.Services.AddApiVersioningConfiguration();
+            builder.Services.AddSwaggerConfiguration();
 
             builder.Services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -59,12 +61,12 @@ namespace AppCoreSystem.API
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
+                app.UseSwaggerDocumentation();
+
             }
 
             app.UseMiddleware<ErrorHandlerMiddleware>();
 
-            app.UseHttpsRedirection();
 
 
             app.UseAuthentication();

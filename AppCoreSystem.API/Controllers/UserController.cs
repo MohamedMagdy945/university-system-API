@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using AppCoreSystem.Application.Features.Identity.Auth.Login.Commands;
+﻿using AppCoreSystem.Application.Features.Identity.Auth.Login.Commands;
 using AppCoreSystem.Application.Features.Identity.Auth.Register.Commands.CreateUser;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AppCoreSystem.API.Controllers
 {
@@ -11,8 +11,8 @@ namespace AppCoreSystem.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(CreateUserCommand command)
         {
-            var response = await _mediator.Send(command);
-            return NewResult(response);
+            var response = await Mediator.Send(command);
+            return Result(response);
         }
 
         [HttpPost("Login")]
@@ -20,8 +20,8 @@ namespace AppCoreSystem.API.Controllers
         public async Task<IActionResult> Login(LoginCommand command)
         {
 
-            var response = await _mediator.Send(command);
-            return NewResult(response);
+            var response = await Mediator.Send(command);
+            return Result(response);
         }
 
         //[HttpPost("refresh")]

@@ -8,13 +8,9 @@ namespace AppCoreSystem.API.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 public abstract class AppControllerBase : ControllerBase
 {
-    protected readonly IMediator _mediator;
-
-    protected AppControllerBase(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
+    private IMediator? _mediator;
+    protected IMediator Mediator =>
+        _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
     protected IActionResult Result<T>(Response<T> response)
     {
         return response.StatusCode switch
