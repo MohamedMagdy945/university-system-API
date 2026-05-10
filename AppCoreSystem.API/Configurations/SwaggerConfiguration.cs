@@ -1,5 +1,4 @@
-﻿using Asp.Versioning.ApiExplorer;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace AppCoreSystem.API.Configurations;
@@ -80,14 +79,10 @@ public static class SwaggerConfiguration
 
         app.UseSwaggerUI(options =>
         {
-            var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+            options.RoutePrefix = string.Empty;
 
-            foreach (var description in provider.ApiVersionDescriptions)
-            {
-                options.SwaggerEndpoint(
-                    $"/swagger/{description.GroupName}/swagger.json",
-                    $"AppCore API - {description.GroupName.ToUpperInvariant()}");
-            }
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "AppCore API V1");
+            options.SwaggerEndpoint("/swagger/v2/swagger.json", "AppCore API V2");
             options.DisplayRequestDuration();
             options.EnablePersistAuthorization();
             options.DocExpansion(DocExpansion.None);
