@@ -4,8 +4,9 @@
     {
         public bool IsSuccess { get; set; }
         public string Message { get; set; } = string.Empty;
+        public List<string>? Errors { get; set; }
+
         public T? Data { get; set; }
-        public Dictionary<string, List<string>> Errors { get; set; } = new();
         public int StatusCode { get; set; }
         public string? CorrelationId { get; set; }
 
@@ -22,7 +23,6 @@
         {
             IsSuccess = false;
             Message = message;
-            Errors = errors ?? new();
             StatusCode = statusCode;
         }
     }

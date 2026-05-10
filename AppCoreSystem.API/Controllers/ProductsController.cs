@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AppCoreSystem.Application.Common.Bases;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AppCoreSystem.API.Controllers;
 
@@ -10,31 +11,52 @@ public class ProductsController : ControllerBase
     /// Get all products from the system
     /// </summary>
     /// <remarks>
-    /// This endpoint returns a list of all available products.
-    /// You can use it for catalog display in the frontend.
+    /// Returns a list of all available products.
     /// </remarks>
-    /// <returns>List of products</returns>
-    /// <response code="200">Returns list of products successfully</response>
-    /// <response code="500">If something went wrong on server</response>
+    /// <response code="402">Products retrieved successfully</response>
     [HttpGet]
+    [ProducesResponseType(typeof(Response<List<string>>), 200)]
     public IActionResult GetAll()
     {
-        return Ok(new[] { "Product1", "Product2" });
+        var products = new List<string>
+        {
+            "Product1",
+            "Product2"
+        };
+
+        var response = new Response<List<string>>
+        {
+            Data = products,
+            StatusCode = 200
+        };
+
+        return Ok(response);
     }
 
-    /// <summary>
-    /// Get product by id
-    /// </summary>
-    /// <param name="id">Product unique identifier</param>
-    /// <returns>Single product</returns>
-    /// <response code="200">Product found</response>
-    /// <response code="404">Product not found</response>
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(Response<string>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Response<string>), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(Response<string>), StatusCodes.Status404NotFound)]
     public IActionResult GetById(int id)
     {
-        if (id == 0)
-            return NotFound();
 
-        return Ok($"Product {id}");
+        if (id == 10)
+        {
+            var notFound = new Response<string>
+            {
+                Message = "Product not found",
+                StatusCode = 404
+            };
+
+            return NotFound(notFound);
+        }
+
+        var response = new Response<string>
+        {
+            Data = $"Product {id}",
+            StatusCode = 200
+        };
+
+        return Ok(response);
     }
 }

@@ -24,7 +24,6 @@ namespace AppCoreSystem.Application.Common.Bases
             {
                 IsSuccess = false,
                 Message = message,
-                Errors = errors ?? new Dictionary<string, List<string>>(),
                 StatusCode = statusCode,
                 CorrelationId = correlationId
             };
@@ -37,7 +36,6 @@ namespace AppCoreSystem.Application.Common.Bases
             {
                 IsSuccess = false,
                 Message = message,
-                Errors = errors ?? new Dictionary<string, List<string>>(),
                 StatusCode = StatusCodes.Status404NotFound
             };
         }
@@ -47,7 +45,6 @@ namespace AppCoreSystem.Application.Common.Bases
             {
                 IsSuccess = false,
                 Message = message,
-                Errors = new Dictionary<string, List<string>>(),
                 StatusCode = 401
             };
         }
