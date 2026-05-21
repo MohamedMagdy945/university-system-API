@@ -1,5 +1,6 @@
 using AppCoreSystem.API.Configurations;
 using AppCoreSystem.API.DependencyInjection;
+using AppCoreSystem.API.Middleware;
 using AppCoreSystem.Application;
 using AppCoreSystem.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -65,8 +66,9 @@ namespace AppCoreSystem.API
 
             }
 
-            app.UseMiddleware<ErrorHandlerMiddleware>();
 
+            app.UseMiddleware<ErrorHandlerMiddleware>();
+            app.UseMiddleware<CorrelationIdMiddleware>();
 
 
             app.UseAuthentication();
