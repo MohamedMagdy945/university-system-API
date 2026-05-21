@@ -7,6 +7,14 @@ namespace AppCoreSystem.API.Controllers;
 [Route("api/v{version:apiVersion}/products")]
 public class ProductsController : ControllerBase
 {
+
+    private readonly ILogger<ProductsController> _logger;
+
+    public ProductsController(
+        ILogger<ProductsController> logger)
+    {
+        _logger = logger;
+    }
     /// <summary>
     /// Get all products from the system
     /// </summary>
@@ -18,6 +26,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(Response<List<string>>), 200)]
     public IActionResult GetAll()
     {
+
         var products = new List<string>
         {
             "Product1",
@@ -29,7 +38,7 @@ public class ProductsController : ControllerBase
             Data = products,
             StatusCode = 200
         };
-
+        _logger.LogInformation("Products retrieved successfully");
         return Ok(response);
     }
 

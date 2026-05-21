@@ -16,9 +16,12 @@ namespace AppCoreSystem.API
     {
         public static void Main(string[] args)
         {
+            LoggingConfiguration.ConfigureBootstrapLogger();
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.ConfigureSerilog();
 
             builder.Services.AddControllers();
 
@@ -67,9 +70,11 @@ namespace AppCoreSystem.API
             }
 
 
-            app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMiddleware<CorrelationIdMiddleware>();
 
+            app.UseMiddleware<ErrorHandlerMiddleware>();
+
+            app.UseCustomRequestLogging();
 
             app.UseAuthentication();
 
